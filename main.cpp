@@ -40,6 +40,7 @@ void DrawRoundedRectangle(float x, float y, float width, float height, float rad
 class Layers_system
 {
 private:
+bool able_to_add_layers;
 struct Layer
 {
   function<void()> Func;
@@ -50,18 +51,25 @@ struct Layer
 };
 vector<Layer> Layers;
 public:
+Layers_system()
+{
+    able_to_add_layers = true;
+}
 void add_to_draw(const std::function<void(void)>& drawFunc, int Layer_number)
 {
-Layers.push_back({drawFunc, Layer_number}); 
-stable_sort(Layers.begin(), Layers.end());
+   if (able_to_add_layers)
+  {  
+   Layers.push_back({drawFunc, Layer_number}); 
+   stable_sort(Layers.begin(), Layers.end());
+  }
 }
-
 void draw_layers(void)
 {
       for (size_t i = 0; i < Layers.size(); i++)
   {
     Layers[i].Func();
   }
+  able_to_add_layers = false;
 }
 };
 
@@ -81,12 +89,14 @@ int main () {
         BeginDrawing();
         ClearBackground(SKYBLUE);
 
+DrawFPS(50,50);
+
 // Examples
 
-Main_layers_system.add_to_draw([]() {DrawRectangle(50,50, 150, 150, RED);}, 4);
-Main_layers_system.add_to_draw([]() {DrawCircle(125,125,60,ORANGE);}, 5);
-Main_layers_system.add_to_draw([]() {DrawCircle(125,125,40,GREEN);}, 6);
-Main_layers_system.add_to_draw([]() {DrawCircle(125,125,20,YELLOW);}, 7);
+Main_layers_system.add_to_draw([]() {DrawRectangle(300,450, 150, 150, RED);}, 4);
+Main_layers_system.add_to_draw([]() {DrawCircle(375,525,60,ORANGE);}, 5);
+Main_layers_system.add_to_draw([]() {DrawCircle(375,525,40,GREEN);}, 6);
+Main_layers_system.add_to_draw([]() {DrawCircle(375,525,20,YELLOW);}, 7);
 
 Main_layers_system.add_to_draw([]() {DrawRoundedRectangle(250,200, 200, 200, 20, Lighter);}, 3);
 Main_layers_system.add_to_draw([]() {DrawRoundedRectangle(300,200, 200, 200, 20, Light);}, 2);
